@@ -21,12 +21,29 @@ app.post("/addCard", async (req, res) => {
   try {
     const result = await Card.create({ Question, Answer });
     console.log(result);
-    res.status(201).json("created successfully");
+    res.status(201).json({response:result,message:"created successfully"});
   } catch (err) {
     console.log(err);
   }
 
   console.log(data);
+});
+
+app.put("/update/:id", async (req, res) => {
+  const id = req.params.id;
+  const { question, answer } = req.body;
+  console.log(req.body);
+  try {
+    const result = await Card.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true }
+    );
+    console.log(result);
+    res.status(201).json({updated:result,messsage:"updated successfully"});
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 app.delete("/delete", async (req, res) => {
@@ -52,6 +69,8 @@ app.get("/getAllCards", async (req, res) => {
   }
 });
 
+
+//----Delete API endpoint-------------------------------------------------------
 app.delete("/delete/:id", async (req, res) => {
   const id = req.params.id;
   try {
@@ -62,5 +81,26 @@ app.delete("/delete/:id", async (req, res) => {
     console.log(err);
   }
 });
+
+//--------Toggle known-unknown----------------------------------------------------
+app.put("/updateKnown/:id",async(req,res)=>{
+  const id = req.params.id;
+  const known = req.body.known;
+
+  try{
+    const response = await Card.findByIdAndUpdate(id,{known:!known},{new:true});
+    res.status(200).json({updated:response,message:"updated successfully"})
+    console.log(res);
+  }catch(err){
+    console.log(err);
+  }
+})
+
+
+
+
+
+
+
 
 app.listen(8000, () => console.log("server is running on port 8000"));
